@@ -1,0 +1,50 @@
+name: E2E Tests
+
+on:
+  # 推送到 main 分支時觸發
+  push:
+    branches: [main]
+
+  # PR 到 main 時觸發
+  pull_request:
+    branches: [main]
+
+  # 允許手動觸發
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: 簽出程式碼
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: 安裝 Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # Step 3: 安裝專案依賴
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: 安裝 Playwright 瀏覽器
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      # Step 5: 執行 E2E 測試
+      - name: Run E2E Tests
+        run: npx playwright test
+
+      # Step 6: 上傳測試報告
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
