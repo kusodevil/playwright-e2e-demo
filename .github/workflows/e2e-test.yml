@@ -1,3 +1,4 @@
+# Playwright E2E Testing with Allure Report & Slack Notification
 name: E2E Tests
 
 on:
