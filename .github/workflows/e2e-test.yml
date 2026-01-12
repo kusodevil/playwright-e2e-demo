@@ -115,3 +115,21 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-report
+
+  # 發送 Slack 通知
+  notify:
+    needs: [test, allure-report]
+    runs-on: ubuntu-latest
+    if: always() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Send Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ needs.test.result }}
+          fields: repo,message,commit,author,action,eventName,workflow,took
+          text: |
+            ${{ needs.test.result == 'success' && '✅ 測試通過！' || '❌ 測試失敗！' }}
+            📊 報告: https://kusodevil.github.io/playwright-e2e-demo/
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
