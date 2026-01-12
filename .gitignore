@@ -5,6 +5,10 @@ node_modules/
 playwright-report/
 test-results/
 
+# Allure
+allure-results/
+allure-report/
+
 # OS files
 .DS_Store
 Thumbs.db

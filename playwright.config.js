@@ -27,6 +27,7 @@ module.exports = defineConfig({
   reporter: [
     ['list'],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['allure-playwright'],
   ],
 
   // 所有測試共用的設定
