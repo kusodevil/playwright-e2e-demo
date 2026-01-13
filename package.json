@@ -4,6 +4,7 @@
   "description": "E2E Testing Demo with Playwright - Portfolio Project",
   "scripts": {
     "test": "playwright test",
+    "test:staging": "TEST_ENV=staging playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "report": "playwright show-report",

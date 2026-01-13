@@ -2,6 +2,32 @@
 const { defineConfig, devices } = require('@playwright/test');
 
 /**
+ * 環境設定
+ * 透過 TEST_ENV 環境變數切換不同環境
+ *
+ * 使用方式：
+ * - npm test                    (預設: production)
+ * - npm run test:staging        (staging 環境)
+ * - TEST_ENV=staging npm test   (手動指定)
+ */
+const environments = {
+  production: {
+    baseURL: 'https://www.saucedemo.com',
+    name: 'Production',
+  },
+  staging: {
+    baseURL: 'https://www.saucedemo.com', // Sauce Demo 只有一個環境，這裡示範用
+    name: 'Staging',
+  },
+};
+
+// 取得當前環境，預設為 production
+const currentEnv = process.env.TEST_ENV || 'production';
+const envConfig = environments[currentEnv] || environments.production;
+
+console.log(`🌍 Testing Environment: ${envConfig.name} (${envConfig.baseURL})`);
+
+/**
  * Playwright 設定檔
  * @see https://playwright.dev/docs/test-configuration
  */
@@ -32,8 +58,8 @@ module.exports = defineConfig({
 
   // 所有測試共用的設定
   use: {
-    // 基礎 URL，測試中可用 page.goto('/') 直接訪問
-    baseURL: 'https://www.saucedemo.com',
+    // 基礎 URL，從環境設定中取得
+    baseURL: envConfig.baseURL,
 
     // 截圖：只在失敗時截圖
     screenshot: 'only-on-failure',
