@@ -28,24 +28,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: 安裝 Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # Step 2: 設定 Docker Buildx (支援 cache)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 3: 使用 Docker cache 建立 image
+      - name: Build Docker Image with Cache
+        uses: docker/build-push-action@v5
         with:
-          node-version: '20'
-          cache: 'npm'
+          context: .
+          push: false
+          load: true
+          tags: playwright-e2e-demo:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # Step 3: 安裝專案依賴
-      - name: Install dependencies
-        run: npm ci
-
-      # Step 4: 安裝 Playwright 瀏覽器
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
-
-      # Step 5: 執行 E2E 測試
-      - name: Run E2E Tests
-        run: npx playwright test
+      # Step 4: 執行 Docker 容器進行測試
+      - name: Run E2E Tests in Docker
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/playwright-report:/app/playwright-report \
+            -v ${{ github.workspace }}/allure-results:/app/allure-results \
+            -v ${{ github.workspace }}/test-results:/app/test-results \
+            playwright-e2e-demo:latest
 
       # Step 6: 上傳 Allure 測試結果
       - name: Upload Allure Results

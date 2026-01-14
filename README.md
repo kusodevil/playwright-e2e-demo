@@ -157,12 +157,20 @@ playwright-e2e-demo/
 ## CI/CD
 
 每次 push 到 `main` 分支會自動：
-1. 執行所有測試
+1. 使用 Docker 執行所有測試（支援 layer cache 加速）
 2. 產生 Allure 報告
 3. 部署報告到 GitHub Pages
 4. 發送 Slack 通知
 
 **測試報告**: https://kusodevil.github.io/playwright-e2e-demo/
+
+### CI/CD 優化
+
+專案使用 **Docker Layer Caching** 來加速 CI 建置：
+- 第一次執行：完整建立所有 layer（約 2-3 分鐘）
+- 後續執行：僅重建有變更的 layer（約 30-60 秒）
+- Cache 儲存在 GitHub Actions Cache 中
+- 使用 `cache-from: type=gha` 和 `cache-to: type=gha,mode=max`
 
 ## 技術堆疊
 
@@ -185,6 +193,9 @@ playwright-e2e-demo/
 
 ### CI/CD 自動化
 > GitHub Actions 自動執行測試、產生報告、部署到 GitHub Pages，並發送 Slack 通知。測試失敗會自動重試 2 次。
+
+### Docker Layer Caching
+> 透過 GitHub Actions Cache 儲存 Docker layer，讓 CI 建置時間從 2-3 分鐘縮短到 30-60 秒。只有變更的 layer 會重新建立，大幅提升 CI 效率。
 
 ## 作者
 
