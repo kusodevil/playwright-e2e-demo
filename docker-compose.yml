@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # E2E 測試服務
+  e2e-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: playwright-e2e-tests
+    volumes:
+      # 掛載測試報告到本地
+      - ./playwright-report:/app/playwright-report
+      - ./allure-results:/app/allure-results
+      - ./test-results:/app/test-results
+    environment:
+      # 測試環境變數
+      - TEST_ENV=${TEST_ENV:-production}
+      - CI=true
+    command: npm test
+
+  # 測試特定環境
+  e2e-tests-staging:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: playwright-e2e-tests-staging
+    volumes:
+      - ./playwright-report:/app/playwright-report
+      - ./allure-results:/app/allure-results
+      - ./test-results:/app/test-results
+    environment:
+      - TEST_ENV=staging
+      - CI=true
+    command: npm run test:staging
+    profiles:
+      - staging

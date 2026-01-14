@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Test results
+playwright-report/
+test-results/
+allure-results/
+allure-report/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+*.log
+
+# Environment
+.env
+.env.local
+
+# Claude
+.claude/
